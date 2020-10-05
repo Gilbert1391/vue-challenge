@@ -8,20 +8,15 @@
         </ul>
       </div>
       <div class="form-group">
-        <label for="punchType">Ponche</label>
+        <label for="punchType">Tipo de ponche</label>
         <select class="form-control" id="punchType" v-model="punchStatus">
-          <option v-for="(punch, index) in punchTypeData" :key="index">
-            {{ punch }}
+          <option value="" selected disabled>Seleccione opción</option>
+          <option v-for="(type, index) in punchTypes" :key="index">
+            {{ type }}
           </option>
         </select>
       </div>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        :disabled="!getCurrentPunchStatus"
-      >
-        Guardar
-      </button>
+      <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
   </div>
 </template>
@@ -32,7 +27,7 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Punches",
   data() {
-    return { errors: [], punchStatus: "Break" };
+    return { errors: [], punchStatus: "" };
   },
   methods: {
     ...mapActions([
@@ -41,11 +36,16 @@ export default {
       "incrementLunchCounter",
     ]),
     onSubmit() {
-      if (this.getBreakCounter >= 2) {
+      this.errors = [];
+      if (!this.punchStatus) {
+        this.errors.push("Tipo de ponche es requerido");
+      }
+
+      if (this.getBreakCounter >= 2 && this.punchStatus === "Break") {
         this.errors.push("Solo puede tomar 2 breaks");
       }
 
-      if (this.getLunchCounter >= 1) {
+      if (this.getLunchCounter >= 1 && this.punchStatus === "Almuerzo") {
         this.errors.push("Solo puede tomar 1 almuerzo");
       }
 
@@ -59,6 +59,7 @@ export default {
         }
 
         this.addPunch(this.punchStatus);
+        this.punchStatus = "";
       }
     },
   },
@@ -68,16 +69,25 @@ export default {
       "getBreakCounter",
       "getLunchCounter",
     ]),
-    punchTypeData() {
-      const data = ["Break", "Almuerzo", "Salida"];
-      if (
-        this.getCurrentPunchStatus &&
-        this.getCurrentPunchStatus !== "Entrada"
-      ) {
-        data.push("Entrada");
+    punchTypes() {
+      const types = ["Entrada", "Break", "Almuerzo", "Salida"];
+      const deletetype = (type) => types.splice(types.indexOf(type), 1);
+
+      switch (this.getCurrentPunchStatus) {
+        case "Entrada":
+          deletetype("Entrada");
+          break;
+        case "Break":
+          deletetype("Break");
+          break;
+        case "Almuerzo":
+          deletetype("Almuerzo");
+          break;
+        default:
+          deletetype("Entrada");
       }
 
-      return data;
+      return types;
     },
   },
 };

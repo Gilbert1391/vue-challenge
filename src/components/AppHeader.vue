@@ -8,7 +8,7 @@
         <router-link to="/" class="nav-link">Entrada</router-link>
       </li>
       <li class="nav-item">
-        <router-link to="/breaks" class="nav-link">Breaks</router-link>
+        <router-link to="/ponches" class="nav-link">Ponches</router-link>
       </li>
       <li class="nav-item">
         <router-link to="/historial" class="nav-link">Historial</router-link>
@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 'AppHeader',
+  name: "AppHeader",
 };
 </script>
 

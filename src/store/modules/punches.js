@@ -10,8 +10,10 @@ const state = {
 };
 
 const getters = {
+  getAllPunches: (state) => state.punches,
   getCurrentPunchStatus: (state) => state.currentPunchStatus,
   getInitPunchDate: (state) => state.initPunch,
+  getEmployeeName: (state) => state.employeeName,
   getBreakCounter: (state) => state.breakCounter,
   getLunchCounter: (state) => state.lunchCounter,
 };

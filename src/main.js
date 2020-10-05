@@ -20,7 +20,7 @@ export const router = new VueRouter({
       component: InitPunch,
     },
     {
-      path: '/breaks',
+      path: '/ponches',
       component: Punches,
     },
     {

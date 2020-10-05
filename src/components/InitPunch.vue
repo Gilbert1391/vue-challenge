@@ -9,18 +9,30 @@
       </div>
       <div class="form-group">
         <label for="name">Nombre</label>
-        <input v-model="name" type="text" class="form-control" id="name" />
+        <input
+          v-model="name"
+          :readonly="getCurrentPunchStatus"
+          type="text"
+          class="form-control"
+          id="name"
+        />
         <div class="invalid-feedback">Please provide a valid city.</div>
       </div>
       <div class="form-group">
         <label for="date">Fecha de entrada</label>
-        <input v-model="date" type="date" class="form-control" id="date" />
+        <input
+          v-model="date"
+          :readonly="getCurrentPunchStatus"
+          type="date"
+          class="form-control"
+          id="date"
+        />
       </div>
 
       <button
         type="submit"
         class="btn btn-primary"
-        :disabled="getCurrentPunchStatus === 'Entrada' || loading"
+        :disabled="getCurrentPunchStatus || loading"
       >
         {{ loading ? "Cargando..." : "Guardar" }}
       </button>
@@ -33,12 +45,16 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "InitPunch",
+  created() {
+    this.name = this.getEmployeeName;
+    this.date = this.getInitPunchDate;
+  },
   data() {
     return {
       loading: false,
       errors: [],
       name: null,
-      date: null,
+      date: this.getInitPunchDate,
     };
   },
   methods: {
@@ -67,7 +83,11 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getCurrentPunchStatus"]),
+    ...mapGetters([
+      "getCurrentPunchStatus",
+      "getInitPunchDate",
+      "getEmployeeName",
+    ]),
   },
 };
 </script>
