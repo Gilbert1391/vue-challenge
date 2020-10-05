@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import App from './App.vue';
+import store from './store';
 import InitPunch from './components/InitPunch';
 import Punches from './components/Punches';
 import PunchHistory from './components/PunchHistory';
@@ -19,7 +20,7 @@ export const router = new VueRouter({
       component: InitPunch,
     },
     {
-      path: '/punches',
+      path: '/breaks',
       component: Punches,
     },
     {
@@ -34,6 +35,7 @@ export const router = new VueRouter({
 });
 
 new Vue({
+  store,
   router,
   render: (h) => h(App),
 }).$mount('#app');
