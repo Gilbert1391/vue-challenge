@@ -1,7 +1,7 @@
 <template>
   <nav class="bg-light">
     <div>
-      <router-link to="/" class="logo">Logo</router-link>
+      <span><b>Ponche Actual:</b> {{ getCurrentPunchStatus }}</span>
     </div>
     <ul class="nav justify-content-end">
       <li class="nav-item">
@@ -21,8 +21,13 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "AppHeader",
+  computed: {
+    ...mapGetters(["getCurrentPunchStatus"]),
+  },
 };
 </script>
 
@@ -42,7 +47,7 @@ nav {
   color: #007bff;
 }
 
-.logo {
+span {
   color: #4c4c4c;
   padding-left: 15px;
 }

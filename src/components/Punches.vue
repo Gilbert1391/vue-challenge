@@ -29,11 +29,18 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+// import moment from "moment";
 
 export default {
   name: "Punches",
   data() {
-    return { loading: false, errors: [], punchStatus: "" };
+    return {
+      loading: false,
+      errors: [],
+      punchStatus: "",
+      maxNumOfBreaks: 2,
+      maxNumOfLunches: 1,
+    };
   },
   methods: {
     ...mapActions([
@@ -48,11 +55,17 @@ export default {
         this.errors.push("Tipo de ponche es requerido");
       }
 
-      if (this.getBreakCounter >= 2 && this.punchStatus === "Break") {
+      if (
+        this.getBreakCounter >= this.maxNumOfBreaks &&
+        this.punchStatus === "Break"
+      ) {
         this.errors.push("Solo puede tomar 2 breaks");
       }
 
-      if (this.getLunchCounter >= 1 && this.punchStatus === "Almuerzo") {
+      if (
+        this.getLunchCounter >= this.maxNumOfLunches &&
+        this.punchStatus === "Almuerzo"
+      ) {
         this.errors.push("Solo puede tomar 1 almuerzo");
       }
 
@@ -63,7 +76,16 @@ export default {
           this.loading = false;
           this.addPunch(this.punchStatus);
 
-          if (this.punchStatus === "Break") {
+          if (this.getAllPunches.length && this.punchStatus === "Entrada") {
+            // TODO: Get times diff
+            /*
+            const lastPunch = this.getAllPunches[this.getAllPunches.length - 1];
+            const start = moment(lastPunch.time);
+            const end = moment().format("h:mm:ss a");
+            const diff = moment.duration(start.diff(end));
+            console.log(diff.asSeconds());
+            */
+          } else if (this.punchStatus === "Break") {
             this.incrementBreakCounter();
           } else if (this.punchStatus === "Almuerzo") {
             this.incrementLunchCounter();
@@ -81,6 +103,7 @@ export default {
       "getCurrentPunchStatus",
       "getBreakCounter",
       "getLunchCounter",
+      "getAllPunches",
     ]),
     punchTypes() {
       const types = ["Entrada", "Break", "Almuerzo", "Salida"];
@@ -92,9 +115,11 @@ export default {
           break;
         case "Break":
           deletetype("Break");
+          deletetype("Almuerzo");
           break;
         case "Almuerzo":
           deletetype("Almuerzo");
+          deletetype("Break");
           break;
         default:
           deletetype("Entrada");
