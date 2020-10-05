@@ -2,7 +2,7 @@
   <div class="form-container">
     <form @submit.prevent="onSubmit">
       <div v-if="errors.length" class="alert alert-danger">
-        <b>Por favor corregir errores:</b>
+        <b>Error:</b>
         <ul>
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
@@ -13,74 +13,64 @@
         <div class="invalid-feedback">Please provide a valid city.</div>
       </div>
       <div class="form-group">
-        <label for="initDate">Fecha de entrada</label>
-        <input v-model="initDate" type="date" class="form-control" id="initDate" />
+        <label for="date">Fecha de entrada</label>
+        <input v-model="date" type="date" class="form-control" id="date" />
       </div>
 
       <button
         type="submit"
         class="btn btn-primary"
-        :disabled="punchStatus === 'Entrada' || loading"
+        :disabled="getCurrentPunchStatus === 'Entrada' || loading"
       >
-        {{ loading ? 'Cargando...' : 'Guardar' }}
+        {{ loading ? "Cargando..." : "Guardar" }}
       </button>
     </form>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from "vuex";
 
 export default {
-  name: 'InitPunch',
+  name: "InitPunch",
   data() {
     return {
       loading: false,
       errors: [],
       name: null,
-      initDate: null,
+      date: null,
     };
   },
   methods: {
-    ...mapActions(['initPunch']),
+    ...mapActions(["initPunch", "addPunch"]),
     onSubmit() {
       this.errors = [];
 
       if (!this.name) {
-        this.errors.push('Nombre es requerido');
+        this.errors.push("Nombre es requerido");
       }
 
-      if (!this.initDate) {
-        this.errors.push('Fecha de entrada es requerido');
+      if (!this.date) {
+        this.errors.push("Fecha de entrada es requerido");
       }
-
-      this.loading = true;
 
       if (!this.errors.length) {
+        this.loading = true;
         setTimeout(() => {
           this.loading = false;
-          const data = { name: this.name, initDate: this.initDate };
+          const data = { employeeName: this.name, date: this.date };
+
           this.initPunch(data);
+          this.addPunch("Entrada");
         }, 1000);
       }
     },
   },
   computed: {
-    ...mapGetters(['punchStatus']),
+    ...mapGetters(["getCurrentPunchStatus"]),
   },
 };
 </script>
 
 <style scoped>
-.form-container {
-  width: 50%;
-  height: 40vh;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-}
-
-form {
-  width: 100%;
-}
 </style>
