@@ -16,7 +16,13 @@
           </option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        :disabled="!getCurrentPunchStatus || loading"
+      >
+        {{ loading ? "Cargando..." : "Guardar" }}
+      </button>
     </form>
   </div>
 </template>
@@ -27,13 +33,14 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Punches",
   data() {
-    return { errors: [], punchStatus: "" };
+    return { loading: false, errors: [], punchStatus: "" };
   },
   methods: {
     ...mapActions([
       "addPunch",
       "incrementBreakCounter",
       "incrementLunchCounter",
+      "punchOut",
     ]),
     onSubmit() {
       this.errors = [];
@@ -50,16 +57,22 @@ export default {
       }
 
       if (!this.errors.length) {
-        if (this.punchStatus === "Break") {
-          this.incrementBreakCounter();
-        }
+        this.loading = true;
 
-        if (this.punchStatus === "Almuerzo") {
-          this.incrementLunchCounter();
-        }
+        setTimeout(() => {
+          this.loading = false;
+          this.addPunch(this.punchStatus);
 
-        this.addPunch(this.punchStatus);
-        this.punchStatus = "";
+          if (this.punchStatus === "Break") {
+            this.incrementBreakCounter();
+          } else if (this.punchStatus === "Almuerzo") {
+            this.incrementLunchCounter();
+          } else if (this.punchStatus === "Salida") {
+            this.punchOut();
+          }
+
+          this.punchStatus = "";
+        }, 800);
       }
     },
   },

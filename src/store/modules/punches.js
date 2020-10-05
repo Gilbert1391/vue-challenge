@@ -26,6 +26,10 @@ const actions = {
     commit('SET_EMPLOYEE_NAME', employeeName);
   },
 
+  punchOut({ commit }) {
+    commit('PUNCH_OUT');
+  },
+
   addPunch({ commit, rootState }, type) {
     const time = moment().format('h:mm:ss a');
 
@@ -55,6 +59,13 @@ const mutations = {
   ADD_PUNCH: (state, punch) => state.punches.push(punch),
   INCREMENT_BREAKS_COUNTER: (state) => ++state.breakCounter,
   INCREMENT_LUNCH_COUNTER: (state) => ++state.lunchCounter,
+  PUNCH_OUT: (state) => {
+    state.currentPunchStatus = null;
+    state.employeeName = null;
+    state.initPunchDate = null;
+    state.breakCounter = 0;
+    state.lunchCounter = 0;
+  },
 };
 
 export default {
