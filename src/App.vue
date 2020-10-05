@@ -21,7 +21,7 @@ export default {
 <style>
 .form-container {
   width: 40%;
-  height: 50vh;
+  min-height: 50vh;
   margin: 0 auto;
   display: flex;
   align-items: center;
