@@ -7,6 +7,10 @@
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
       </div>
+      <div v-if="showWarning" class="alert alert-warning">
+        <b>Advertencia:</b>
+        Ha excedido el tiempo de break!
+      </div>
       <div class="form-group">
         <label for="punchType">Tipo de ponche</label>
         <select class="form-control" id="punchType" v-model="punchStatus">
@@ -29,7 +33,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-// import moment from "moment";
+import moment from "moment";
 
 export default {
   name: "Punches",
@@ -40,6 +44,7 @@ export default {
       punchStatus: "",
       maxNumOfBreaks: 2,
       maxNumOfLunches: 1,
+      showWarning: false,
     };
   },
   methods: {
@@ -51,6 +56,7 @@ export default {
     ]),
     onSubmit() {
       this.errors = [];
+      this.showWarning = false;
       if (!this.punchStatus) {
         this.errors.push("Tipo de ponche es requerido");
       }
@@ -77,14 +83,16 @@ export default {
           this.addPunch(this.punchStatus);
 
           if (this.getAllPunches.length && this.punchStatus === "Entrada") {
-            // TODO: Get times diff
-            /*
-            const lastPunch = this.getAllPunches[this.getAllPunches.length - 1];
-            const start = moment(lastPunch.time);
-            const end = moment().format("h:mm:ss a");
-            const diff = moment.duration(start.diff(end));
-            console.log(diff.asSeconds());
-            */
+            const secondToLastPunch = this.getAllPunches[
+              this.getAllPunches.length - 2
+            ];
+            const now = moment().format("h:mm:ss a");
+            const startTime = moment(secondToLastPunch.time, "hh:mm:ss a");
+            const endTime = moment(now, "hh:mm:ss a");
+            const duration = moment.duration(endTime.diff(startTime));
+            const diff = parseInt(duration.asSeconds());
+
+            this.showWarning = diff > 10;
           } else if (this.punchStatus === "Break") {
             this.incrementBreakCounter();
           } else if (this.punchStatus === "Almuerzo") {
